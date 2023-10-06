@@ -4,10 +4,13 @@
 #include <memory>
 #include <unordered_set>
 #include <cassert>
+#include <vector>
 
 class World {
 public:
-	IdT CreateEntity();
+	Entity CreateEntity();
+
+  void ScheduleEntityDeletion(Entity ent);
 
 	template<typename T>
 	void SetComponent(Entity ent, T&& comp) {
@@ -17,6 +20,8 @@ public:
 		AddBucket<T>();
 		auto bucket = GetCastedBucket<T>();
 		bucket->Set(ent, std::forward<T>(comp));
+
+    ents_to_comps_[ent].insert(comp_id);
 	}
 
 	template<typename T, typename... CompsT>
@@ -52,11 +57,23 @@ private:
 		return std::static_pointer_cast<ComponentBucket<T>>(comp_buckets_[TypeId<T>::Get()]);
 	}
 
+  void DeleteComponent(Entity ent, IdT comp);
+
+  template<typename T>
+  void DeleteComponent(Entity ent) {
+    DeleteComponent(ent, TypeId<T>::Get());
+  }
+
+  void DeleteEntity(Entity ent);
+
 private:
 	std::unordered_set<IdT> entities_;
+  std::unordered_map<Entity, std::unordered_set<IdT>> ents_to_comps_;
 	IdT entity_counter_ = 0;
 
 	std::unordered_map<IdT, std::shared_ptr<IComponentBucket>> comp_buckets_;
 	IdT comp_counter_ = 0;
+
+  std::unordered_set<Entity> to_die_list_;
 
 };

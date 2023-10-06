@@ -5,7 +5,7 @@
 
 class IComponentBucket {
 public:
-	virtual void OnEntityDeath(IdT ent) = 0;
+  virtual void EraseEntity(Entity ent) = 0;
 
 	virtual ~IComponentBucket() = 0;
 };
@@ -19,7 +19,7 @@ public:
 		return ent_to_comp_.find(ent) != ent_to_comp_.end();
 	}
 
-	void OnEntityDeath(Entity ent) override {
+	void EraseEntity(Entity ent) override {
 		ent_to_comp_.erase(ent);
 	}
 
