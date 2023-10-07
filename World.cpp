@@ -16,8 +16,24 @@ void World::DeleteComponent(Entity ent, IdT comp) {
 }
 
 void World::DeleteEntity(Entity ent) {
-  entities_.erase(ent);
   for (auto comp : ents_to_comps_[ent]) {
-    DeleteComponent(ent, comp);
+    comp_buckets_[comp]->EraseEntity(ent);
   }
+  ents_to_comps_.erase(ent);
+  entities_.erase(ent);
+}
+
+void World::DeleteScheduled() {
+  for (auto ent: to_die_list_) {
+    DeleteEntity(ent);
+  }
+  to_die_list_.clear();
+}
+
+void World::Update(float dt) {
+  DeleteScheduled();
+}
+
+bool World::IsAlive(Entity ent) {
+  return entities_.find(ent) != entities_.end();
 }

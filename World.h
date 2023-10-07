@@ -32,6 +32,10 @@ public:
 			return HasComponent<T>(ent) && HasComponents<CompsT...>(ent);
 	}
 
+  void Update(float dt);
+
+  bool IsAlive(Entity ent);
+
 private:
 	template<typename T>
 	bool HasComponent(Entity ent) {
@@ -66,13 +70,14 @@ private:
 
   void DeleteEntity(Entity ent);
 
+  void DeleteScheduled();
+
 private:
 	std::unordered_set<IdT> entities_;
   std::unordered_map<Entity, std::unordered_set<IdT>> ents_to_comps_;
 	IdT entity_counter_ = 0;
 
 	std::unordered_map<IdT, std::shared_ptr<IComponentBucket>> comp_buckets_;
-	IdT comp_counter_ = 0;
 
   std::unordered_set<Entity> to_die_list_;
 
