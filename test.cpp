@@ -7,7 +7,7 @@
 int main() {
   World w;
   auto e0 = w.CreateEntity();
-  w.SetComponent(e0, Position{});
+  w.SetComponent(e0, Position{1.0f});
 
   auto e1 = w.CreateEntity();
   w.SetComponent(e1, Age{});
@@ -19,6 +19,9 @@ int main() {
   w.AddSystem<PrintSystem>();
 
   w.Update(0.f);
+
+  auto& pos = w.GetComponent<Position>(e0);
+  std::cout << pos.val << '\n';
 
   return 0;
 }

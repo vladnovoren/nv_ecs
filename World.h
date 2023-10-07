@@ -13,6 +13,11 @@ public:
 
   void ScheduleEntityDeletion(Entity ent);
 
+  template<typename T>
+  T& GetComponent(Entity ent) {
+    return GetCastedBucket<T>()->Get(ent);
+  }
+
 	template<typename T>
 	void SetComponent(Entity ent, T&& comp) {
 		assert(entities_.find(ent) != entities_.end());
