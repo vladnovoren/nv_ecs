@@ -1,7 +1,7 @@
 #include "World.h"
 
 Entity World::CreateEntity() {
-	IdT id = entity_counter_++;
+	auto id = entity_counter_++;
 	entities_.insert(id);
 	return id;
 }
@@ -10,7 +10,7 @@ void World::ScheduleEntityDeletion(Entity ent) {
   to_die_list_.insert(ent);
 }
 
-void World::DeleteComponent(Entity ent, IdT comp) {
+void World::DeleteComponent(Entity ent, CompIdT comp) {
   comp_buckets_[comp]->EraseEntity(ent);
   ents_to_comps_[ent].erase(comp);
 }
@@ -31,6 +31,8 @@ void World::DeleteScheduled() {
 }
 
 void World::Update(float dt) {
+  for (auto& system : systems_)
+    system->Update(*this, dt);
   DeleteScheduled();
 }
 

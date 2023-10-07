@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <cassert>
 #include <vector>
+#include "System/System.h"
 
 class World {
 public:
@@ -32,11 +33,31 @@ public:
 			return HasComponent<T>(ent) && HasComponents<CompsT...>(ent);
 	}
 
+  template<typename... CompsT>
+  std::vector<Entity> Filter() {
+    if constexpr (sizeof...(CompsT) == 0)
+      return {entities_.begin(), entities_.end()};
+
+    std::vector<Entity> res;
+    for (auto ent : entities_) {
+      if (HasComponents<CompsT...>(ent))
+        res.emplace_back(ent);
+    }
+
+    return res;
+  }
+
   void Update(float dt);
 
   bool IsAlive(Entity ent);
 
+  template<typename T, typename... ArgsT>
+  void AddSystem(ArgsT&&... args) {
+    systems_.emplace_back(std::make_unique<T>(std::forward<ArgsT>(args)...));
+  }
+
 private:
+
 	template<typename T>
 	bool HasComponent(Entity ent) {
 		return BucketExists<T>() && GetCastedBucket<T>()->HasEntity(ent);
@@ -61,7 +82,7 @@ private:
 		return std::static_pointer_cast<ComponentBucket<T>>(comp_buckets_[TypeId<T>::Get()]);
 	}
 
-  void DeleteComponent(Entity ent, IdT comp);
+  void DeleteComponent(Entity ent, CompIdT comp);
 
   template<typename T>
   void DeleteComponent(Entity ent) {
@@ -73,12 +94,14 @@ private:
   void DeleteScheduled();
 
 private:
-	std::unordered_set<IdT> entities_;
-  std::unordered_map<Entity, std::unordered_set<IdT>> ents_to_comps_;
-	IdT entity_counter_ = 0;
+	std::unordered_set<Entity> entities_;
+  std::unordered_map<Entity, std::unordered_set<CompIdT>> ents_to_comps_;
+	Entity entity_counter_ = 0;
 
-	std::unordered_map<IdT, std::shared_ptr<IComponentBucket>> comp_buckets_;
+	std::unordered_map<CompIdT, std::shared_ptr<IComponentBucket>> comp_buckets_;
 
   std::unordered_set<Entity> to_die_list_;
+
+  std::vector<std::unique_ptr<ISystem>> systems_;
 
 };

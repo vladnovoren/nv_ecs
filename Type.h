@@ -3,6 +3,7 @@
 #include <cstdint>
 
 using IdT = uint64_t;
+using CompIdT = IdT;
 
 static IdT typeid_counter = 0;
 

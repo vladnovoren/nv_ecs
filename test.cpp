@@ -1,25 +1,24 @@
 #include <iostream>
 #include "World.h"
+#include "System/PrintSystem.h"
 
-struct Position {
-  float val = 0;
-};
 
-struct Age {
-  int val = 0;
-};
 
 int main() {
   World w;
-  auto e = w.CreateEntity();
-  w.SetComponent(e, Position{});
-  std::cout << w.HasComponents<Position>(e) << '\n';
-  std::cout << w.HasComponents<Age>(e) << '\n';
-  std::cout << w.HasComponents<Position, Age>(e) << '\n';
-  std::cout << w.HasComponents<Position>(e) << '\n';
-  std::cout << w.HasComponents<Age>(e) << '\n';
-  w.ScheduleEntityDeletion(e);
+  auto e0 = w.CreateEntity();
+  w.SetComponent(e0, Position{});
+
+  auto e1 = w.CreateEntity();
+  w.SetComponent(e1, Age{});
+
+  auto e2 = w.CreateEntity();
+  w.SetComponent(e2, Position{});
+  w.SetComponent(e2, Age{});
+
+  w.AddSystem<PrintSystem>();
+
   w.Update(0.f);
-  std::cout << w.IsAlive(e) << '\n';
+
   return 0;
 }
