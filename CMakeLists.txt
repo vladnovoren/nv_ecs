@@ -14,7 +14,6 @@ add_link_options(
 add_library(ecs STATIC)
 target_sources(ecs PUBLIC
   Component/IComponentBucket.cpp
-  Entity/Entity.cpp
   System/System.cpp
   World.cpp
 )

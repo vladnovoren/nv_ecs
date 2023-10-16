@@ -15,7 +15,9 @@ public:
 			return id_;
 		}
 		inited_ = true;
-		return (id_ = typeid_counter++);
+		id_ = typeid_counter;
+		typeid_counter++;
+		return id_;
 	}
 private:
 	static bool inited_;

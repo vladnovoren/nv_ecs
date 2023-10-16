@@ -52,7 +52,7 @@ public:
     return res;
   }
 
-  void Update(float dt);
+  void Update(float dt = 0);
 
   bool IsAlive(Entity ent);
 
